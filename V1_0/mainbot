@@ -1,0 +1,34 @@
+# Daniel Rossi © 2021
+# https://youtube.com/c/ProjectoOfficial
+
+from instabot.V1_0 import bot
+
+if __name__ == '__main__':
+
+    username = ''
+    password = ''
+    profile = ''
+    tag = ''
+
+    # start deve essere >=1
+    stop = 1000
+    start = 100
+
+    # MODE
+    # 1) likes first picture of profile's followers sequentially
+    # 2) likes first picture of profile's followers randomly
+    # 3) likes pictures found by a tag
+    # 4) prints all your followers
+
+    mode = 1
+
+    bot = bot.InstaBot(username, password)
+
+    if mode == 1:
+        bot.work_sequentially(profile, stop, start)
+    elif mode == 2:
+        bot.work_randomly(profile, stop, start)
+    elif mode == 3:
+        bot.like_on_a_tag(tag, stop)
+    elif mode == 4:
+        bot.update_followers()
