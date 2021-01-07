@@ -50,23 +50,27 @@ class InstaBot:
     def work_randomly(self, profile, stop=100, start=0):
         n = start
         number_list = []
+        multiplier = 2.8
         while True:
 
             # barra di ricerca
             self.driver.get("https://instagram.com/{}".format(profile))
-            sleep(2)
+            sleep(randrange(3, 12))
 
             # entra nei follower
             self.driver.find_element_by_xpath(
                 '//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a').click()
-            sleep(2)
+            sleep(randrange(3, 12))
 
             last_ht, ht = 0, 1
             scroll_box = self.driver.find_element_by_xpath("/html/body/div[5]/div/div/div[2]")
 
             # entra nel profilo di un follower random
+            number_list.append(0)
             while True:
-                rand_number = randrange(start, stop, 1)  # start,stop,step
+                rand_number = 0
+                while rand_number in number_list:
+                    rand_number = randrange(start, stop * multiplier, 1)  # start,stop,step
                 if rand_number not in number_list:
                     number_list.append(rand_number)
                     break
@@ -80,27 +84,36 @@ class InstaBot:
                     print("Found!")
                     break
                 except Exception:
-                    pass
+                    try:
+                        self.driver.find_element_by_xpath(
+                            '/html/body/div[5]/div/div/div[2]/ul/div/li[{}]/div/div[1]/div[2]/div[1]/span/a'.format(
+                                rand_number)).click()
+                        break
+                    except Exception:
+                        try:
+                            sleep(randrange(2, 4))
+                            ht = self.driver.execute_script("""
+                                            arguments[0].scrollTo({},{});
+                                            return arguments[0].scrollHeight""".format(ht, ht + 0.1), scroll_box)
+                        except Exception:
+                            break
 
-                try:
-                    ht = self.driver.execute_script("""
-                                arguments[0].scrollTo({},{});
-                                return arguments[0].scrollHeight""".format(ht, ht+5), scroll_box)
+            sleep(randrange(5, 12))
 
-                except Exception:
-                    break
-                sleep(1.5)
-
-            sleep(3)
-
-            # prende la prima foto
             try:
+                # prende la prima foto
                 self.driver.find_element_by_xpath(
                     '/html/body/div[1]/section/main/div/div[3]/article/div[1]/div/div[1]/div[1]/a/div/div[2]').click()
                 print("getting the picture")
             except Exception:
-                pass
-            sleep(1.4)
+                try:
+                    self.driver.find_element_by_xpath(
+                        '/html/body/div[1]/section/main/div/div[2]/article/div/div/div/div[1]/a').click()
+                    print("getting the picture")
+                except Exception:
+                    pass
+
+            sleep(randrange(3, 12))
 
             # mette like
             try:
@@ -111,7 +124,7 @@ class InstaBot:
                 print("total likes done until now: {}".format(self.totlikes))
             except Exception:
                 pass
-            sleep(1.4)
+            sleep(randrange(3, 12))
 
             n += 1
 
@@ -127,12 +140,12 @@ class InstaBot:
         while True:
             # barra di ricerca
             self.driver.get("https://instagram.com/{}".format(profile))
-            sleep(randrange(3, 9))
+            sleep(randrange(3, 12))
 
             # entra nei follower
             self.driver.find_element_by_xpath(
                 '//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a').click()
-            sleep(randrange(3, 11))
+            sleep(randrange(3, 12))
 
             ht = 0
             scroll_box = self.driver.find_element_by_xpath("/html/body/div[5]/div/div/div[2]")
@@ -161,7 +174,7 @@ class InstaBot:
                         except Exception:
                             break
 
-            sleep(randrange(5, 11))
+            sleep(randrange(5, 12))
 
             try:
                 # prende la prima foto
@@ -175,7 +188,7 @@ class InstaBot:
                     print("getting the picture")
                 except Exception:
                     pass
-            sleep(randrange(3, 11))
+            sleep(randrange(3, 12))
 
             # mette like
             try:
@@ -187,7 +200,7 @@ class InstaBot:
                 print("total likes done until now: {}".format(self.totlikes))
             except Exception:
                 pass
-            sleep(randrange(3, 11))
+            sleep(randrange(3, 12))
 
             n += 1
 

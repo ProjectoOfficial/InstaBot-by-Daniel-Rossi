@@ -11,8 +11,8 @@ if __name__ == '__main__':
     tag = ''
 
     # start deve essere >=1
-    stop = 1000
-    start = 100
+    stop = 100
+    start = 1
 
     # MODE
     # 1) likes first picture of profile's followers sequentially
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     # 3) likes pictures found by a tag
     # 4) prints all your followers
 
-    mode = 1
+    mode = 2
 
     bot = bot.InstaBot(username, password)
 
