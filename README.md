@@ -17,5 +17,5 @@ ISTRUZIONI PER L'UTILIZZO DEL BOT V1.1
 - eseguire il codice
 
 
-ATTENZIONE: se si decide di copiare il codice in modo autonomo, riga per riga, si è consapevoli che si può commettere errori. Tali errori dovranno essere altrettanto risolti in autonomia!
+ATTENZIONE: se si decide di copiare il codice in modo autonomo, riga per riga, si è consapevoli che si può commettere errori. Tali errori dovranno essere altrettanto risolti in autonomia! Si è inoltre consapevoli della non tolleranza da parte di instagram sull'utilizzo di bot che cercano di incrementare il proprio seguito.
 
