@@ -1,18 +1,19 @@
-# Daniel Rossi © 2021
+# Dott. Daniel Rossi © 2021
 # https://youtube.com/c/ProjectoOfficial
+# seguici anche su Instagram come @OfficialProjecto e Facebook come @MiniProjectsOfficial
 
 from instabot.V1_0 import bot
 
 if __name__ == '__main__':
 
-    username = ''
+    username = 'officialprojecto'
     password = ''
     profile = ''
     tag = ''
 
     # start deve essere >=1
-    stop = 100
-    start = 1
+    stop = 300
+    start = 3
 
     # MODE
     # 1) likes first picture of profile's followers sequentially
@@ -20,7 +21,7 @@ if __name__ == '__main__':
     # 3) likes pictures found by a tag
     # 4) prints all your followers
 
-    mode = 2
+    mode = 1
 
     bot = bot.InstaBot(username, password)
 

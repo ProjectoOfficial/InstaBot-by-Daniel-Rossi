@@ -1,5 +1,6 @@
-# Daniel Rossi © 2021
+# Dott. Daniel Rossi © 2021
 # https://youtube.com/c/ProjectoOfficial
+# seguici anche su Instagram come @OfficialProjecto e Facebook come @MiniProjectsOfficial
 
 from selenium import webdriver
 from time import sleep
@@ -10,7 +11,7 @@ import os
 
 class InstaBot:
     def __init__(self, username, password):
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome('chromedriver.exe')
         self.username = username
         self.totlikes = 0
 
@@ -39,11 +40,11 @@ class InstaBot:
                 '/html/body/div[1]/section/main/div/div/div[1]/div/form/div[2]/button').click()
             sleep(5)
             self.driver.find_element_by_xpath(
-                '//*[@id="react-root"]/section/main/div/div/div/section/div/button').click()
+                '/html/body/div[4]/div/div/div/div[3]/button[2]').click()
             sleep(5)
-        self.driver.find_element_by_xpath(
-            '/html/body/div[4]/div/div/div/div[3]/button[2]').click()
-        sleep(2)
+        #self.driver.find_element_by_xpath(
+            #'/html/body/div[4]/div/div/div/div[3]/button[2]').click()
+        #sleep(2)
 
         pickle.dump(self.driver.get_cookies(), open("cookies.pkl", "wb"))
 
@@ -63,7 +64,7 @@ class InstaBot:
             sleep(randrange(3, 12))
 
             last_ht, ht = 0, 1
-            scroll_box = self.driver.find_element_by_xpath("/html/body/div[5]/div/div/div[2]")
+            scroll_box = self.driver.find_element_by_xpath("/html/body/div[4]/div/div/div[2]")
 
             # entra nel profilo di un follower random
             number_list.append(0)
@@ -148,21 +149,21 @@ class InstaBot:
             sleep(randrange(3, 12))
 
             ht = 0
-            scroll_box = self.driver.find_element_by_xpath("/html/body/div[5]/div/div/div[2]")
+            scroll_box = self.driver.find_element_by_xpath("/html/body/div[4]/div/div/div[2]")
             # entra nel profilo di un follower random
 
             print("user to find: {}".format(n))
             while True:
                 try:
                     self.driver.find_element_by_xpath(
-                        '/html/body/div[5]/div/div/div[2]/ul/div/li[{}]/div/div[2]/div[1]/div/div/span/a'.format(
+                        '/html/body/div[4]/div/div/div[2]/ul/div/li[{}]/div/div[1]/div/div/a'.format(
                             n)).click()
                     print("Found!")
                     break
                 except Exception:
                     try:
                         self.driver.find_element_by_xpath(
-                            '/html/body/div[5]/div/div/div[2]/ul/div/li[{}]/div/div[1]/div[2]/div[1]/span/a'.format(
+                            '/html/body/div[4]/div/div/div[2]/ul/div/li[{}]/div/div[2]/div[1]/div/div/span/a'.format(
                                 n)).click()
                         break
                     except Exception:
@@ -184,7 +185,7 @@ class InstaBot:
             except Exception:
                 try:
                     self.driver.find_element_by_xpath(
-                        '/html/body/div[1]/section/main/div/div[2]/article/div/div/div/div[1]/a').click()
+                        '/html/body/div[1]/section/main/div/div[2]/article/div/div/div[1]/div[1]/a').click()
                     print("getting the picture")
                 except Exception:
                     pass
@@ -194,7 +195,7 @@ class InstaBot:
             try:
 
                 self.driver.find_element_by_xpath(
-                    '/html/body/div[5]/div[2]/div/article/div[3]/section[1]/span[1]/button').click()
+                    '/html/body/div[4]/div[2]/div/article/div[3]/section[1]/span[1]/button').click()
                 print("pushing like")
                 self.totlikes += 1
                 print("total likes done until now: {}".format(self.totlikes))
