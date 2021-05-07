@@ -19,3 +19,6 @@ ISTRUZIONI PER L'UTILIZZO DEL BOT V1.1
 
 ATTENZIONE: se si decide di copiare il codice in modo autonomo, riga per riga, si è consapevoli che si può commettere errori. Tali errori dovranno essere altrettanto risolti in autonomia! Si è inoltre consapevoli della non tolleranza da parte di instagram sull'utilizzo di bot che cercano di incrementare il proprio seguito.
 
+BOT V1.0: è il bot che vi mostro nei video su YouTube
+BOT V2.0: è un bot che sfrutta API di terze parti per Instagram (Difficile da far funzionare)
+
