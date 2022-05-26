@@ -11,10 +11,19 @@ import os
 
 class InstaBot:
     def __init__(self, username, password):
-        self.driver = webdriver.Chrome('chromedriver.exe')
+        self.driver = None
         self.username = username
         self.totlikes = 0
 
+        self.username = username
+        self.password = password
+
+        self._followers_PATH = "followers.txt"
+        self._following_PATH = "following.txt"
+        self._people_to_unfollow_PATH = "to_unfollow.txt"
+
+    def _login(self):
+        self.driver = webdriver.Chrome('chromedriver.exe')
         self.driver.get("https://instagram.com")
         sleep(2)
 
@@ -23,24 +32,34 @@ class InstaBot:
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
 
+        # cookies button
         self.driver.find_element_by_xpath(
-            '/html/body/div[2]/div/div/div/div[2]/button[1]').click()
-        self.driver.find_element_by_xpath("//input[@name=\"username\"]").send_keys(username)
-        self.driver.find_element_by_xpath("//input[@name=\"password\"]").send_keys(password)
-        self.driver.find_element_by_xpath(
-            '//*[@id="loginForm"]/div/div[3]/button/div').click()
+            '/html/body/div[4]/div/div/button[1]').click()
+
+        sleep(1)
+
+        self.driver.find_element_by_xpath("//input[@name=\"username\"]").send_keys(self.username)
+        self.driver.find_element_by_xpath("//input[@name=\"password\"]").send_keys(self.password)
+        # access button
+        self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div').click()
         sleep(4)
 
         if not os.path.exists("cookies.pkl"):
             code = input("insert code")
+
+            # insert 2FA code
             self.driver.find_element_by_xpath(
                 '/html/body/div[1]/section/main/div/div/div[1]/div/form/div[1]/div/label/input').send_keys(code)
             sleep(1)
+
+            # click code confirmation button
             self.driver.find_element_by_xpath(
                 '/html/body/div[1]/section/main/div/div/div[1]/div/form/div[2]/button').click()
             sleep(5)
+
+            # save login info --> not now
             self.driver.find_element_by_xpath(
-                '/html/body/div[4]/div/div/div/div[3]/button[2]').click()
+                '/html/body/div[1]/div/div/section/main/div/div/div/div/button').click()
             sleep(5)
         #self.driver.find_element_by_xpath(
             #'/html/body/div[4]/div/div/div/div[3]/button[2]').click()
@@ -48,7 +67,26 @@ class InstaBot:
 
         pickle.dump(self.driver.get_cookies(), open("cookies.pkl", "wb"))
 
+    def get_banner(self):
+        return """ 
+            ██╗███╗   ██╗███████╗████████╗ █████╗ ██████╗  ██████╗ ████████╗                                          
+            ██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝                                          
+            ██║██╔██╗ ██║███████╗   ██║   ███████║██████╔╝██║   ██║   ██║                                             
+            ██║██║╚██╗██║╚════██║   ██║   ██╔══██║██╔══██╗██║   ██║   ██║                                             
+            ██║██║ ╚████║███████║   ██║   ██║  ██║██████╔╝╚██████╔╝   ██║                                             
+            ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝  ╚═════╝    ╚═╝                                             
+                                                                                                                      
+            ██████╗ ██╗   ██╗    ██████╗  █████╗ ███╗   ██╗██╗███████╗██╗         ██████╗  ██████╗ ███████╗███████╗██╗
+            ██╔══██╗╚██╗ ██╔╝    ██╔══██╗██╔══██╗████╗  ██║██║██╔════╝██║         ██╔══██╗██╔═══██╗██╔════╝██╔════╝██║
+            ██████╔╝ ╚████╔╝     ██║  ██║███████║██╔██╗ ██║██║█████╗  ██║         ██████╔╝██║   ██║███████╗███████╗██║
+            ██╔══██╗  ╚██╔╝      ██║  ██║██╔══██║██║╚██╗██║██║██╔══╝  ██║         ██╔══██╗██║   ██║╚════██║╚════██║██║
+            ██████╔╝   ██║       ██████╔╝██║  ██║██║ ╚████║██║███████╗███████╗    ██║  ██║╚██████╔╝███████║███████║██║
+            ╚═════╝    ╚═╝       ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚══════╝╚═╝                                                                                                                                            
+            """
+
     def work_randomly(self, profile, stop=100, start=0):
+        self._login()
+
         n = start
         number_list = []
         multiplier = 2.8
@@ -136,8 +174,9 @@ class InstaBot:
                 break
 
     def work_sequentially(self, profile, stop=100, start=0):
-        n = start
+        self._login()
 
+        n = start
         while True:
             # barra di ricerca
             self.driver.get("https://instagram.com/{}".format(profile))
@@ -214,6 +253,8 @@ class InstaBot:
                 break
 
     def like_on_a_tag(self, tag, stop=100):
+        self._login()
+
         n = 1
         y = 1
         x = 1
@@ -261,53 +302,177 @@ class InstaBot:
                 break
 
     def __get_followers(self,):
-        # barra di ricerca
+        self._login()
+
+        # gets to the user profile
         self.driver.get("https://instagram.com/{}".format(self.username))
         sleep(2)
 
-        # entra nei follower
+        # clicks on followers
         self.driver.find_element_by_xpath(
-            '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a').click()
+            '/html/body/div[1]/div/div/section/main/div/header/section/ul/li[2]/a').click()
         sleep(5)
 
+        # gets the scrollbar
         last_ht, ht = 0, 1
-        scroll_box = self.driver.find_element_by_xpath("/html/body/div[5]/div/div/div[2]")
+        scroll_box = self.driver.find_element_by_xpath("/html/body/div[6]/div/div/div/div[2]")
         sleep(1)
-        if os.path.exists("followers.txt"):
-            os.remove("followers.txt")
+        if os.path.exists(self._followers_PATH):
+            os.remove(self._followers_PATH)
 
-        f = open("followers.txt", "a")
+        f = open(self._followers_PATH, "a")
 
+        if f == None:
+            print("couldn't create or open {}".format(self._following_PATH))
+
+        # get the total number of followers
         n_max = int(self.driver.find_element_by_xpath(
-                    '/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/span').text)
-        print(n_max)
+                    '/html/body/div[1]/div/div/section/main/div/header/section/ul/li[2]/a/div/span').text)
 
+        print(n_max)
         n = 1
 
         while True:
+            user = None
+
             try:
                 user = self.driver.find_element_by_xpath(
-                    '/html/body/div[5]/div/div/div[2]/ul/div/li[{}]/div/div[1]/div[2]/div[1]/span/a'.format(n)).text
-                print(user)
-                f.write(user+"\n")
-                sleep(0.5)
+                    '/html/body/div[6]/div/div/div/div[2]/ul/div/li[{}]/div/div[2]/div[1]/div/div/span/a/span'.format(n)).text
             except Exception:
+                pass
+
+            try:
+                user = self.driver.find_element_by_xpath(
+                    '/html/body/div[6]/div/div/div/div[2]/ul/div/li[{}]/div/div[1]/div[2]/div[1]/span/a/span'.format(n)).text
+            except Exception:
+                pass
+
+            if user == None:
                 try:
+                    print("********* SCROLLING **********")
                     ht = self.driver.execute_script("""arguments[0].scrollTo({},{});
                                 return arguments[0].scrollHeight""".format(ht, ht + 0.1), scroll_box)
                     sleep(1.5)
-                    n += 1
+                    continue
                 except Exception:
+                    print("cannot scroll")
                     break
+
+            print("{} - {}".format(n, user))
+            f.write(user+"\n")
+            sleep(0.1)
+            n += 1
+
             if n > n_max:
                 break
 
         f.close()
         print("done! got followers")
 
+
+    def __get_following(self,):
+        self._login()
+
+        # gets to the profile page
+        self.driver.get("https://instagram.com/{}".format(self.username))
+        sleep(2)
+
+        # clicks on the following link
+        self.driver.find_element_by_xpath(
+            '/html/body/div[1]/div/div/section/main/div/header/section/ul/li[3]/a').click()
+        sleep(5)
+
+        # gets the scrollbar
+        last_ht, ht = 0, 1
+        scroll_box = self.driver.find_element_by_xpath("/html/body/div[6]/div/div/div/div[3]")
+        sleep(1)
+        if os.path.exists(self._following_PATH):
+            os.remove(self._following_PATH)
+
+        f = open(self._following_PATH, "a")
+
+        if f == None:
+            print("couldn't create or open {}".format(self._following_PATH))
+
+        # gets the number of following
+        n_max = int(self.driver.find_element_by_xpath(
+                    '//*[@id="react-root"]/div/div/section/main/div/header/section/ul/li[3]/a/div/span').text)
+        print(n_max)
+        n = 1
+        while True:
+            user = None
+
+            try:
+                user = self.driver.find_element_by_xpath(
+                    '/html/body/div[6]/div/div/div/div[3]/ul/div/li[{}]/div/div[2]/div[1]/div/div/span/a/span'.format(n)).text
+            except Exception:
+                pass
+
+            try:
+                user = self.driver.find_element_by_xpath(
+                    '/html/body/div[6]/div/div/div/div[3]/ul/div/li[{}]/div/div[1]/div[2]/div[1]/span/a/span'.format(n)).text
+            except Exception:
+                pass
+
+            if user == None:
+                try:
+                    print("********* SCROLLING **********")
+                    ht = self.driver.execute_script("""arguments[0].scrollTo({},{});
+                                return arguments[0].scrollHeight""".format(ht, ht + 0.1), scroll_box)
+                    sleep(1.5)
+                    continue
+                except Exception:
+                    print("cannot scroll")
+                    break
+
+            print("{} - {}".format(n, user))
+            f.write(user + "\n")
+            sleep(0.1)
+            n += 1
+
+            if n > n_max:
+                break
+
+        f.close()
+        print("done! got following")
+
     def update_followers(self):
         self.__get_followers()
 
-        with open("followers.txt", "r") as f:
+        with open(self._followers_PATH, "r") as f:
             for line in f:
                 print(line)
+
+    def i_am_not_a_fan_of_anyone(self, updatefollowers:bool=True, updatefollowing:bool=True):
+        if updatefollowers:
+            self.__get_followers()
+        if updatefollowing:
+            self.__get_following()
+
+        try:
+            assert os.path.exists(self._followers_PATH)
+            assert os.path.exists(self._following_PATH)
+        except AssertionError:
+            print("{} or {} or both files do not exist".format(self._followers_PATH, self._following_PATH))
+
+        followers = []
+        followings = []
+
+        with open(self._followers_PATH) as f:
+            followers = [line.strip() for line in f]
+
+        with open(self._following_PATH) as f:
+            followings = [line.strip() for line in f]
+
+        if os.path.exists(self._people_to_unfollow_PATH):
+            os.remove(self._people_to_unfollow_PATH)
+
+        print("people who are not following you:")
+        with open(self._people_to_unfollow_PATH, "a") as f:
+            for following in followings:
+                if not following in followers:
+                    print(following)
+                    f.write(following)
+
+
+
