@@ -6,6 +6,7 @@ from instabot import bot
 from selenium import webdriver
 from instabot.utils import init
 import os
+import subprocess
 
 '''
 Please consider that the bot may not work because it could be necessary to update xpaths
@@ -15,6 +16,7 @@ TEST = False
 
 if __name__ == '__main__':
     if TEST:
+        subprocess.call("TASKKILL /f  /IM  CHROME.EXE")
         pass
     else:
         path, (username, password) = init(reset=False)

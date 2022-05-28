@@ -114,7 +114,7 @@ def password_check(passwd, min_chars: int = 8, max_chars: int = 20) -> bool:
     return val
 
 
-def get_fernet_key(password:str) :
+def get_fernet_key(password: str):
     salt = password.encode()
 
     kdf = Scrypt(
@@ -126,3 +126,33 @@ def get_fernet_key(password:str) :
     )
     key = kdf.derive(password.encode())
     return base64.urlsafe_b64encode(key)
+
+
+def encrypt_cookies(password: str, filename: str):
+    key = get_fernet_key(password)
+    fernet = Fernet(key)
+
+    data = None
+    with open(filename, "rb") as f1:
+        data = f1.read()
+
+    os.remove(filename)
+    encrypted_data = fernet.encrypt(data)
+
+    with open(filename, "wb") as f2:
+        f2.write(encrypted_data)
+
+
+def decrypt_cookies(password: str, filename: str):
+    key = get_fernet_key(password)
+    fernet = Fernet(key)
+
+    data = None
+    with open(filename, "rb") as f1:
+        data = f1.read()
+
+    os.remove(filename)
+    encrypted_data = fernet.decrypt(data)
+
+    with open(filename, "wb") as f2:
+        f2.write(encrypted_data)

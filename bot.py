@@ -8,6 +8,7 @@ from time import sleep
 from random import randrange
 import pickle
 import os
+import utils
 
 
 class InstaBot:
@@ -30,7 +31,10 @@ class InstaBot:
         sleep(2)
 
         if os.path.exists(self.path + "cookies.pkl"):
+            utils.decrypt_cookies(self.password, self.path + "cookies.pkl")
             cookies = pickle.load(open(self.path + "cookies.pkl", "rb"))
+            utils.encrypt_cookies(self.password, self.path + "cookies.pkl")
+
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
 
@@ -46,7 +50,7 @@ class InstaBot:
         self.driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[3]/button/div').click()
         sleep(4)
 
-        if not os.path.exists("cookies.pkl"):
+        if not os.path.exists(self.path + "cookies.pkl"):
             code = input("insert code")
 
             # insert 2FA code
@@ -65,6 +69,7 @@ class InstaBot:
             sleep(5)
 
             pickle.dump(self.driver.get_cookies(), open(self.path + "cookies.pkl", "wb"))
+            utils.encrypt_cookies(self.password, self.path + "cookies.pkl")
 
     def get_banner(self):
         return """ 
@@ -172,6 +177,8 @@ class InstaBot:
                 print("Last user number: {}".format(n))
                 break
 
+        self._close()
+
     def work_sequentially(self, profile, stop=100, start=0):
         self._login()
 
@@ -251,6 +258,8 @@ class InstaBot:
                 print("Last user number: {}".format(n))
                 break
 
+        self._close()
+
     def like_on_a_tag(self, tag, stop=100):
         self._login()
 
@@ -299,6 +308,8 @@ class InstaBot:
                 print("likes done: {}".format(likes))
                 print("process finished")
                 break
+
+        self._close()
 
     def __get_followers(self, verbose: bool = False):
         # gets to the user profile
@@ -468,3 +479,7 @@ class InstaBot:
                 if not following in followers:
                     print(following)
                     f.write(following + '\n')
+        self._close()
+
+    def _close(self):
+        self.driver.quit()
