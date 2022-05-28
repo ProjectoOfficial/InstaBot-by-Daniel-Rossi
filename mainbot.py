@@ -1,4 +1,4 @@
-# Dott. Daniel Rossi © 2021
+# Dott. Daniel Rossi © 2022
 # https://youtube.com/c/ProjectoOfficial
 # seguici anche su Instagram come @OfficialProjecto e Facebook come @MiniProjectsOfficial
 
@@ -23,7 +23,7 @@ if __name__ == '__main__':
         stop = 300
         start = 3
 
-        bot = bot.InstaBot(username, password)
+        bot = bot.InstaBot(path, username, password)
         mode = 5
         # MODE
         # 1) likes first picture of profile's followers sequentially

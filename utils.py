@@ -83,7 +83,7 @@ def init(reset: bool = False) -> Union[str, tuple]:
     return path, (username, password)
 
 
-def password_check(passwd, min_chars:int=8, max_chars:int=20) -> bool:
+def password_check(passwd, min_chars: int = 8, max_chars: int = 20) -> bool:
     special_symbols = ['$', '@', '#', '%', '!', '?']
     val = True
 

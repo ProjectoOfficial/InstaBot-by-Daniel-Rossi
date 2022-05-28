@@ -11,7 +11,7 @@ import os
 
 
 class InstaBot:
-    def __init__(self, username, password):
+    def __init__(self, path: str, username: str, password: str):
         self.driver = None
         self.username = username
         self.totlikes = 0
@@ -19,17 +19,18 @@ class InstaBot:
         self.username = username
         self.password = password
 
-        self._followers_PATH = "followers.txt"
-        self._following_PATH = "following.txt"
-        self._people_to_unfollow_PATH = "to_unfollow.txt"
+        self.path = path
+        self._followers_PATH = self.path + "followers.txt"
+        self._following_PATH = self.path + "following.txt"
+        self._people_to_unfollow_PATH = self.path + "to_unfollow.txt"
 
     def _login(self):
         self.driver = webdriver.Chrome('chromedriver.exe')
         self.driver.get("https://instagram.com")
         sleep(2)
 
-        if os.path.exists("cookies.pkl"):
-            cookies = pickle.load(open("cookies.pkl", "rb"))
+        if os.path.exists(self.path + "cookies.pkl"):
+            cookies = pickle.load(open(self.path + "cookies.pkl", "rb"))
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
 
@@ -62,11 +63,8 @@ class InstaBot:
             self.driver.find_element_by_xpath(
                 '/html/body/div[1]/div/div/section/main/div/div/div/div/button').click()
             sleep(5)
-        #self.driver.find_element_by_xpath(
-            #'/html/body/div[4]/div/div/div/div[3]/button[2]').click()
-        #sleep(2)
 
-        pickle.dump(self.driver.get_cookies(), open("cookies.pkl", "wb"))
+            pickle.dump(self.driver.get_cookies(), open(self.path + "cookies.pkl", "wb"))
 
     def get_banner(self):
         return """ 
@@ -302,7 +300,7 @@ class InstaBot:
                 print("process finished")
                 break
 
-    def __get_followers(self, verbose:bool=False):
+    def __get_followers(self, verbose: bool = False):
         # gets to the user profile
         self.driver.get("https://instagram.com/{}".format(self.username))
         sleep(1)
@@ -366,8 +364,7 @@ class InstaBot:
         print("done! got followers!\nElapsed time: {:.2f}s".format(time.time() - start_time))
         print("{:.3f}s in average per user\n".format((time.time() - start_time)/n_max))
 
-
-    def __get_following(self, verbose:bool=False):
+    def __get_following(self, verbose: bool = False):
         # gets to the profile page
         self.driver.get("https://instagram.com/{}".format(self.username))
         sleep(1)
@@ -385,7 +382,7 @@ class InstaBot:
 
         f = open(self._following_PATH, "a")
 
-        if f == None:
+        if f is None:
             print("couldn't create or open {}".format(self._following_PATH))
 
         # gets the number of following
@@ -397,7 +394,6 @@ class InstaBot:
         n = 1
         while True:
             user = None
-
             try:
                 user = self.driver.find_element_by_xpath(
                     '/html/body/div[6]/div/div/div/div[3]/ul/div/li[{}]/div/div[2]/div[1]/div/div/span/a/span'.format(n)).text
@@ -438,7 +434,7 @@ class InstaBot:
             for line in f:
                 print(line)
 
-    def i_am_not_a_fan_of_anyone(self, updatefollowers:bool=True, updatefollowing:bool=True, verbose:bool=False):
+    def i_am_not_a_fan_of_anyone(self, updatefollowers: bool = True, updatefollowing: bool = True, verbose: bool = False):
 
         if updatefollowers or updatefollowing:
             self._login()
@@ -472,6 +468,3 @@ class InstaBot:
                 if not following in followers:
                     print(following)
                     f.write(following + '\n')
-
-
-
