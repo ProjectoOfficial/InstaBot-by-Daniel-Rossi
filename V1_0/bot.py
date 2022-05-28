@@ -1,6 +1,7 @@
 # Dott. Daniel Rossi © 2021
 # https://youtube.com/c/ProjectoOfficial
 # seguici anche su Instagram come @OfficialProjecto e Facebook come @MiniProjectsOfficial
+import time
 
 from selenium import webdriver
 from time import sleep
@@ -301,22 +302,19 @@ class InstaBot:
                 print("process finished")
                 break
 
-    def __get_followers(self,):
-        self._login()
-
+    def __get_followers(self, verbose:bool=False):
         # gets to the user profile
         self.driver.get("https://instagram.com/{}".format(self.username))
-        sleep(2)
+        sleep(1)
 
         # clicks on followers
         self.driver.find_element_by_xpath(
             '/html/body/div[1]/div/div/section/main/div/header/section/ul/li[2]/a').click()
-        sleep(5)
+        sleep(1)
 
         # gets the scrollbar
         last_ht, ht = 0, 1
         scroll_box = self.driver.find_element_by_xpath("/html/body/div[6]/div/div/div/div[2]")
-        sleep(1)
         if os.path.exists(self._followers_PATH):
             os.remove(self._followers_PATH)
 
@@ -331,7 +329,7 @@ class InstaBot:
 
         print(n_max)
         n = 1
-
+        start_time = time.time()
         while True:
             user = None
 
@@ -347,45 +345,41 @@ class InstaBot:
             except Exception:
                 pass
 
-            if user == None:
-                try:
-                    print("********* SCROLLING **********")
-                    ht = self.driver.execute_script("""arguments[0].scrollTo({},{});
-                                return arguments[0].scrollHeight""".format(ht, ht + 0.1), scroll_box)
-                    sleep(1.5)
-                    continue
-                except Exception:
-                    print("cannot scroll")
-                    break
+            try:
+                ht = self.driver.execute_script("""arguments[0].scrollTo({},{});
+                            return arguments[0].scrollHeight""".format(ht, ht + 0.1), scroll_box)
 
-            print("{} - {}".format(n, user))
-            f.write(user+"\n")
-            sleep(0.1)
-            n += 1
+            except Exception:
+                print("cannot scroll")
+                break
+
+            if user != None:
+                if verbose:
+                    print("{} - {}".format(n, user))
+                f.write(user+"\n")
+                n += 1
 
             if n > n_max:
                 break
 
         f.close()
-        print("done! got followers")
+        print("done! got followers!\nElapsed time: {:.2f}s".format(time.time() - start_time))
+        print("{:.3f}s in average per user\n".format((time.time() - start_time)/n_max))
 
 
-    def __get_following(self,):
-        self._login()
-
+    def __get_following(self, verbose:bool=False):
         # gets to the profile page
         self.driver.get("https://instagram.com/{}".format(self.username))
-        sleep(2)
+        sleep(1)
 
         # clicks on the following link
         self.driver.find_element_by_xpath(
             '/html/body/div[1]/div/div/section/main/div/header/section/ul/li[3]/a').click()
-        sleep(5)
+        sleep(1)
 
         # gets the scrollbar
         last_ht, ht = 0, 1
         scroll_box = self.driver.find_element_by_xpath("/html/body/div[6]/div/div/div/div[3]")
-        sleep(1)
         if os.path.exists(self._following_PATH):
             os.remove(self._following_PATH)
 
@@ -398,6 +392,8 @@ class InstaBot:
         n_max = int(self.driver.find_element_by_xpath(
                     '//*[@id="react-root"]/div/div/section/main/div/header/section/ul/li[3]/a/div/span').text)
         print(n_max)
+
+        start_time = time.time()
         n = 1
         while True:
             user = None
@@ -414,40 +410,43 @@ class InstaBot:
             except Exception:
                 pass
 
-            if user == None:
-                try:
-                    print("********* SCROLLING **********")
-                    ht = self.driver.execute_script("""arguments[0].scrollTo({},{});
-                                return arguments[0].scrollHeight""".format(ht, ht + 0.1), scroll_box)
-                    sleep(1.5)
-                    continue
-                except Exception:
-                    print("cannot scroll")
-                    break
+            try:
+                ht = self.driver.execute_script("""arguments[0].scrollTo({},{});
+                            return arguments[0].scrollHeight""".format(ht, ht + 0.1), scroll_box)
+            except Exception:
+                print("cannot scroll")
+                break
 
-            print("{} - {}".format(n, user))
-            f.write(user + "\n")
-            sleep(0.1)
-            n += 1
+            if user != None:
+                if verbose:
+                    print("{} - {}".format(n, user))
+                f.write(user + "\n")
+                n += 1
 
             if n > n_max:
                 break
 
         f.close()
-        print("done! got following")
+        print("done! got following!\nElapsed time: {:.2f}s".format(time.time() - start_time))
+        print("{:.3f}s in average per user\n".format((time.time() - start_time)/n_max))
 
     def update_followers(self):
+        self._login()
         self.__get_followers()
 
         with open(self._followers_PATH, "r") as f:
             for line in f:
                 print(line)
 
-    def i_am_not_a_fan_of_anyone(self, updatefollowers:bool=True, updatefollowing:bool=True):
+    def i_am_not_a_fan_of_anyone(self, updatefollowers:bool=True, updatefollowing:bool=True, verbose:bool=False):
+
+        if updatefollowers or updatefollowing:
+            self._login()
+
         if updatefollowers:
-            self.__get_followers()
+            self.__get_followers(verbose)
         if updatefollowing:
-            self.__get_following()
+            self.__get_following(verbose)
 
         try:
             assert os.path.exists(self._followers_PATH)
@@ -472,7 +471,7 @@ class InstaBot:
             for following in followings:
                 if not following in followers:
                     print(following)
-                    f.write(following)
+                    f.write(following + '\n')
 
 
 
