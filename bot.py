@@ -312,14 +312,9 @@ class InstaBot:
         self._close()
 
     def __get_followers(self, verbose: bool = False):
-        # gets to the user profile
-        self.driver.get("https://instagram.com/{}".format(self.username))
-        sleep(1)
-
-        # clicks on followers
-        self.driver.find_element_by_xpath(
-            '/html/body/div[1]/div/div/section/main/div/header/section/ul/li[2]/a').click()
-        sleep(1)
+        # opens user's followers
+        self.driver.get("https://instagram.com/{}/{}".format(self.username, "followers"))
+        sleep(4)
 
         # gets the scrollbar
         last_ht, ht = 0, 1
@@ -376,14 +371,9 @@ class InstaBot:
         print("{:.3f}s in average per user\n".format((time.time() - start_time)/n_max))
 
     def __get_following(self, verbose: bool = False):
-        # gets to the profile page
-        self.driver.get("https://instagram.com/{}".format(self.username))
-        sleep(1)
-
-        # clicks on the following link
-        self.driver.find_element_by_xpath(
-            '/html/body/div[1]/div/div/section/main/div/header/section/ul/li[3]/a').click()
-        sleep(1)
+        # opens user's follwings
+        self.driver.get("https://instagram.com/{}/{}".format(self.username, "following"))
+        sleep(4)
 
         # gets the scrollbar
         last_ht, ht = 0, 1

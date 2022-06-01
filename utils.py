@@ -2,6 +2,7 @@ import os
 import pathlib
 import configparser
 import sys
+import cryptography
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 import base64
@@ -77,9 +78,12 @@ def init(reset: bool = False) -> Union[str, tuple]:
         key = get_fernet_key(secret_password)
         fernet = Fernet(key)
 
-        username = fernet.decrypt(encrypted_username.encode()).decode()
-        password = fernet.decrypt(encrypted_password.encode()).decode()
-
+        try:
+            username = fernet.decrypt(encrypted_username.encode()).decode()
+            password = fernet.decrypt(encrypted_password.encode()).decode()
+        except (cryptography.fernet.InvalidToken, TypeError):
+            print("secret password may be wrong")
+            sys.exit(-1)
     return path, (username, password)
 
 
